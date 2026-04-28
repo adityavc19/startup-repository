@@ -23,22 +23,27 @@ except Exception as e:
     st.stop()
 
 # --- Filters ---
-st.sidebar.header("Filters")
+st.subheader("Filter Data")
+f_col1, f_col2, f_col3, f_col4 = st.columns(4)
 
-# Search by company name
-search_term = st.sidebar.text_input("Search Company", "")
+with f_col1:
+    # Search by company name
+    search_term = st.text_input("Search Company", "")
 
-# Sector Filter
-sectors = ["All"] + sorted([str(s) for s in df['sector'].dropna().unique()])
-selected_sector = st.sidebar.selectbox("Sector", sectors)
+with f_col2:
+    # Sector Filter
+    sectors = ["All"] + sorted([str(s) for s in df['sector'].dropna().unique()])
+    selected_sector = st.selectbox("Sector", sectors)
 
-# Source Filter
-sources = ["All"] + sorted([str(s) for s in df['source'].dropna().unique()])
-selected_source = st.sidebar.selectbox("Source", sources)
+with f_col3:
+    # Source Filter
+    sources = ["All"] + sorted([str(s) for s in df['source'].dropna().unique()])
+    selected_source = st.selectbox("Source", sources)
 
-# Country Filter
-countries = ["All"] + sorted([str(c) for c in df['country'].dropna().unique() if c != 'Unknown']) + ["Unknown"]
-selected_country = st.sidebar.selectbox("Country", countries)
+with f_col4:
+    # Country Filter
+    countries = ["All"] + sorted([str(c) for c in df['country'].dropna().unique() if c != 'Unknown']) + ["Unknown"]
+    selected_country = st.selectbox("Country", countries)
 
 # --- Apply Filters ---
 filtered_df = df.copy()
