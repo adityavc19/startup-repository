@@ -76,7 +76,8 @@ st.dataframe(
     use_container_width=True,
     column_config={
         "company": st.column_config.TextColumn("Company"),
-        "sector": st.column_config.TextColumn("Sector"),
+        "sector": st.column_config.TextColumn("Category"),
+        "tags": st.column_config.TextColumn("Specific Tags"),
         "description": st.column_config.TextColumn("Description"),
         "amount": st.column_config.TextColumn("Amount Raised"),
         "date": st.column_config.DateColumn("Date of Funding"),
