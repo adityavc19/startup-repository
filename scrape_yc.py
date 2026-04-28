@@ -37,11 +37,15 @@ def scrape_yc():
     print(f"Fetched {len(all_hits)} YC companies. Preparing data...")
     
     records = []
+    CUTOFF = datetime(2025, 1, 1)
     for hit in all_hits:
         # Convert launched_at epoch to date string
         launched_date = None
         if hit.get('launched_at'):
-            launched_date = datetime.fromtimestamp(hit['launched_at']).strftime('%Y-%m-%d')
+            dt = datetime.fromtimestamp(hit['launched_at'])
+            if dt < CUTOFF:
+                continue  # Skip companies before 2025
+            launched_date = dt.strftime('%Y-%m-%d')
             
         record = {
             'date': launched_date,

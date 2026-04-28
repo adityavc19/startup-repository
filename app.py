@@ -33,7 +33,7 @@ with f_col1:
 with f_col2:
     # Sector Filter
     sectors = ["All"] + sorted([str(s) for s in df['sector'].dropna().unique()])
-    selected_sector = st.selectbox("Sector", sectors)
+    selected_sector = st.selectbox("Category", sectors)
 
 with f_col3:
     # Source Filter
@@ -44,6 +44,14 @@ with f_col4:
     # Country Filter
     countries = ["All"] + sorted([str(c) for c in df['country'].dropna().unique() if c != 'Unknown']) + ["Unknown"]
     selected_country = st.selectbox("Country", countries)
+
+f_col5, _ = st.columns(2)
+with f_col5:
+    df['date'] = pd.to_datetime(df['date'], errors='coerce')
+    min_date = df['date'].min().date()
+    max_date = df['date'].max().date()
+    date_range = st.date_input("Date Range", value=(min_date, max_date))
+
 
 # --- Apply Filters ---
 filtered_df = df.copy()
@@ -59,6 +67,13 @@ if selected_source != "All":
 
 if selected_country != "All":
     filtered_df = filtered_df[filtered_df['country'] == selected_country]
+
+# Date filter
+if isinstance(date_range, (list, tuple)) and len(date_range) == 2:
+    start_date, end_date = pd.Timestamp(date_range[0]), pd.Timestamp(date_range[1])
+    filtered_df = filtered_df[
+        (filtered_df['date'] >= start_date) & (filtered_df['date'] <= end_date)
+    ]
 
 # --- Display Stats ---
 col1, col2, col3 = st.columns(3)
