@@ -36,6 +36,10 @@ selected_sector = st.sidebar.selectbox("Sector", sectors)
 sources = ["All"] + sorted([str(s) for s in df['source'].dropna().unique()])
 selected_source = st.sidebar.selectbox("Source", sources)
 
+# Country Filter
+countries = ["All"] + sorted([str(c) for c in df['country'].dropna().unique() if c != 'Unknown']) + ["Unknown"]
+selected_country = st.sidebar.selectbox("Country", countries)
+
 # --- Apply Filters ---
 filtered_df = df.copy()
 
@@ -47,6 +51,9 @@ if selected_sector != "All":
 
 if selected_source != "All":
     filtered_df = filtered_df[filtered_df['source'] == selected_source]
+
+if selected_country != "All":
+    filtered_df = filtered_df[filtered_df['country'] == selected_country]
 
 # --- Display Stats ---
 col1, col2, col3 = st.columns(3)
@@ -68,6 +75,7 @@ st.dataframe(
         "description": st.column_config.TextColumn("Description"),
         "amount": st.column_config.TextColumn("Amount Raised"),
         "date": st.column_config.DateColumn("Date of Funding"),
+        "country": st.column_config.TextColumn("Country"),
         "source": st.column_config.TextColumn("Source"),
     },
     hide_index=True
