@@ -132,10 +132,14 @@ with tab_all:
         st.metric("Total Sources", filtered_df['source'].nunique())
 
     # --- Display Data ---
+    # Sort by date descending
+    filtered_df = filtered_df.sort_values('date', ascending=False, na_position='last')
+
     st.subheader("Data Table")
     st.dataframe(
         filtered_df,
         use_container_width=True,
+        height=800,
         column_config={
             "company": st.column_config.TextColumn("Company"),
             "sector": st.column_config.TextColumn("Category"),
@@ -286,6 +290,7 @@ with tab_consumer:
     st.dataframe(
         df_consumer_sorted,
         use_container_width=True,
+        height=800,
         column_config={
             "company": st.column_config.TextColumn("Company"),
             "sector": st.column_config.TextColumn("Category"),
