@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
+
+# Secrets
+credentials.json
+token.json
+gmail_attachments/

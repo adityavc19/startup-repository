@@ -211,6 +211,7 @@ with tab_consumer:
         source = row.get('source', 'Unknown')
         tags = row.get('tags', '')
         stage = row.get('stage', 'Unknown')
+        website = str(row.get('website', '') or '')
 
         date_str = date.strftime('%b %d, %Y') if pd.notna(date) else 'N/A'
 
@@ -230,6 +231,8 @@ with tab_consumer:
                 st.markdown(f"**🌍 Country:** {country}")
                 st.markdown(f"**📈 Stage:** {stage}" if stage and stage != 'Unknown' else "")
                 st.markdown(f"**📰 Source:** {source}")
+                if website and website.strip():
+                    st.markdown(f"**🔗 Website:** [{website}]({website})")
 
     # Also show as a table below
     st.markdown("---")
@@ -247,6 +250,7 @@ with tab_consumer:
             "country": st.column_config.TextColumn("Country"),
             "source": st.column_config.TextColumn("Source"),
             "stage": st.column_config.TextColumn("Stage"),
+            "website": st.column_config.LinkColumn("Website", display_text="Visit →"),
         },
         hide_index=True
     )
