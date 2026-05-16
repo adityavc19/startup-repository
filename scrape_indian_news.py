@@ -39,6 +39,25 @@ def extract_info(title):
         
     return company, amount, title
 
+
+HEADLINE_VERBS = re.compile(
+    r'\b(Mulls|Receives|Raises|Acquires|Shuts|Launches|Secures|Bags|Closes|'
+    r'Lands|Eyes|Gets|Funds|Plans|Files|Says|Reports|IPO|Picks\s+Up|To\s+Raise)\b',
+    re.IGNORECASE
+)
+
+def is_valid_company(name):
+    """Return False if the name looks like a news headline rather than a company name."""
+    if not name or len(name) < 2 or len(name) > 60:
+        return False
+    if HEADLINE_VERBS.search(name):
+        return False
+    # Reject truncated names (ending in common article words)
+    if name.lower().endswith(("'s", " the", " a", " an")):
+        return False
+    return True
+
+
 def scrape_indian_news():
     print("Fetching latest Indian startup funding news...")
     feed = feedparser.parse(RSS_URL)
@@ -61,18 +80,19 @@ def scrape_indian_news():
             
         company, amount, description = extract_info(title)
         
-        record = {
-            'date': today,
-            'company': company,
-            'sector': 'Unknown',
-            'description': description,
-            'location': 'India',
-            'stage': 'Unknown',
-            'amount': amount,
-            'country': 'India',
-            'source': source
-        }
-        records.append(record)
+        if is_valid_company(company):
+            record = {
+                'date': today,
+                'company': company,
+                'sector': 'Unknown',
+                'description': description,
+                'location': 'India',
+                'stage': 'Unknown',
+                'amount': amount,
+                'country': 'India',
+                'source': source
+            }
+            records.append(record)
         
     if not records:
         print("No news found.")
