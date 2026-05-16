@@ -7,6 +7,52 @@ TABLE_NAME = "startups"
 
 st.set_page_config(page_title="Startup Repository", layout="wide")
 
+# Custom CSS for premium white background and colored sections
+st.markdown("""
+<style>
+    /* Gradient text for main title */
+    h1 {
+        background: linear-gradient(90deg, #4F46E5, #9333EA);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800 !important;
+        padding-bottom: 0.2rem;
+    }
+    
+    /* Subtle background for the metric containers */
+    [data-testid="metric-container"] {
+        background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%);
+        border: 1px solid #E0E7FF;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Make metric values pop */
+    [data-testid="stMetricValue"] {
+        color: #4F46E5 !important;
+        font-weight: 800 !important;
+    }
+    
+    /* Expander card styling */
+    [data-testid="stExpander"] {
+        background-color: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Colored section highlight for the subheaders */
+    h2, h3 {
+        color: #1E293B !important;
+        border-left: 4px solid #4F46E5;
+        padding-left: 10px;
+        margin-top: 1.5rem !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 st.title("🚀 Startup Repository")
 st.markdown("A unified database for tracking startups, their sectors, and funding.")
 
