@@ -47,46 +47,23 @@ def is_consumer(row):
 
 
 def search_website(company_name):
-    """Search DuckDuckGo for a startup's website."""
-    headers = {"User-Agent": "Mozilla/5.0"}
-    query = f"{company_name} startup official website"
-    url = f"https://html.duckduckgo.com/html/?q={requests.utils.quote(query)}"
-
+    """Search Clearbit API for a startup's official website."""
+    # Clean up the company name for better search results
+    search_term = company_name.split('-')[0].split('|')[0].strip()
+    
+    url = f"https://autocomplete.clearbit.com/v1/companies/suggest?query={requests.utils.quote(search_term)}"
+    
     try:
-        res = requests.get(url, headers=headers, timeout=10)
-        soup = BeautifulSoup(res.text, "html.parser")
-        results = soup.find_all("a", class_="result__a")
-
-        for result in results[:5]:
-            href = result.get("href", "")
-            # Extract actual URL from DuckDuckGo redirect
-            if "uddg=" in href:
-                from urllib.parse import unquote, parse_qs, urlparse
-                parsed = urlparse(href)
-                params = parse_qs(parsed.query)
-                if "uddg" in params:
-                    href = unquote(params["uddg"][0])
-
-            # Skip noise sites
-            skip_domains = [
-                "linkedin.com", "twitter.com", "x.com", "facebook.com",
-                "crunchbase.com", "pitchbook.com", "tracxn.com",
-                "wikipedia.org", "youtube.com", "github.com",
-                "medium.com", "techcrunch.com", "bloomberg.com",
-                "reuters.com", "forbes.com", "substack.com",
-                "google.com", "bing.com", "duckduckgo.com",
-                "angellist.com", "wellfound.com",
-            ]
-
-            if href.startswith("http") and not any(d in href.lower() for d in skip_domains):
-                # Clean URL to just the domain
-                from urllib.parse import urlparse as up
-                parsed = up(href)
-                clean = f"{parsed.scheme}://{parsed.netloc}"
-                return clean
-
+        res = requests.get(url, timeout=10)
+        if res.status_code == 200:
+            data = res.json()
+            if data and len(data) > 0:
+                domain = data[0].get('domain')
+                if domain:
+                    return f"https://{domain}"
+                    
     except Exception as e:
-        print(f"    Error searching: {e}")
+        print(f"    Error searching Clearbit: {e}")
 
     return ""
 
