@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import feedparser
 import re
+from triage import triage_record
 
 DB_NAME = "startups.db"
 TABLE_NAME = "startups"
@@ -74,8 +75,7 @@ def extract_info(title):
                 company = company.split(p)[-1].strip()
     
     if company == "Unknown" or not company:
-        # Fallback to first few words
-        company = " ".join(clean_title.split()[:2])
+        return "Unknown", amount, title, country
         
     return company, amount, title, country
 
@@ -109,10 +109,12 @@ def scrape_apac_news():
             
         company, amount, description, country = extract_info(title)
         
-        if is_valid_company(company):
+        approved, cleaned_company, reason = triage_record(company, description, source)
+        
+        if approved:
             record = {
                 'date': today,
-                'company': company,
+                'company': cleaned_company,
                 'sector': 'Unknown',
                 'description': description,
                 'location': country,

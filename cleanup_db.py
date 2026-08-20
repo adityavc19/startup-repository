@@ -51,9 +51,20 @@ def cleanup():
 
     df['country'] = df['location'].apply(get_country)
 
-    # Re-save to DB with the new column and cleaned data
-    # We will replace the table
-    df.drop(columns=['rowid'], inplace=True)
+    # Sort so rows with non-empty descriptions and websites come first
+    df['has_web'] = df['website'].apply(lambda x: 1 if x and str(x).strip() not in ['', 'None', 'nan'] else 0)
+    df['has_desc'] = df['description'].apply(lambda x: 1 if x and 'Portfolio Company' not in str(x) and str(x) not in ['Unknown', ''] else 0)
+    
+    df = df.sort_values(by=['has_web', 'has_desc', 'date'], ascending=[False, False, False])
+    
+    # Deduplicate by company and source
+    initial_len = len(df)
+    df = df.drop_duplicates(subset=['company', 'source'], keep='first')
+    df = df.drop(columns=['rowid', 'has_web', 'has_desc'], errors='ignore')
+    
+    print(f"Deduplicated database: reduced from {initial_len} to {len(df)} unique startup records.")
+
+    # Re-save to DB
     df.to_sql(TABLE_NAME, conn, if_exists='replace', index=False)
     
     conn.close()

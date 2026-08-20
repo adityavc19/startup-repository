@@ -10,11 +10,16 @@ URL = "https://speedrun.a16z.com/companies"
 
 def scrape_speedrun():
     print("Fetching a16z Speedrun companies...")
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    res = requests.get(URL, headers=headers)
+    try:
+        import primp
+        client = primp.Client()
+        res = client.get(URL)
+    except Exception:
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'}
+        res = requests.get(URL, headers=headers)
     
     if res.status_code != 200:
-        print("Failed to fetch")
+        print(f"Failed to fetch (status code {res.status_code})")
         return
         
     soup = BeautifulSoup(res.text, 'html.parser')

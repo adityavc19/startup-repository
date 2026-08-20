@@ -69,6 +69,13 @@ def scrape_a16z():
     conn.close()
     
     print(f"Successfully inserted {len(df)} a16z startups into the database.")
+    
+    try:
+        from enrich_all import enrich_companies
+        print("Enriching newly inserted a16z startups...")
+        enrich_companies(len(df))
+    except Exception as e:
+        print(f"Enrichment trigger error: {e}")
 
 if __name__ == "__main__":
     scrape_a16z()

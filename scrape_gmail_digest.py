@@ -44,9 +44,14 @@ def get_gmail_service():
 
     # Refresh or create new credentials
     if not creds or not creds.valid:
+        refreshed = False
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
+            try:
+                creds.refresh(Request())
+                refreshed = True
+            except Exception as e:
+                print(f"Warning: Could not refresh token ({e}). Re-authenticating...")
+        if not refreshed and (not creds or not creds.valid):
             if not os.path.exists(CREDS_FILE):
                 print(f"ERROR: '{CREDS_FILE}' not found!")
                 print("Please follow the setup instructions at the top of this file.")

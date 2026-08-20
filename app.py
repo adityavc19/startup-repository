@@ -68,6 +68,16 @@ except Exception as e:
     st.error(f"Failed to load data from database. Did you run the ingestion script? Error: {e}")
     st.stop()
 
+# --- Pre-process Data ---
+df['date'] = pd.to_datetime(df['date'], errors='coerce')
+
+# --- Last Updated Section ---
+max_date = df['date'].max()
+if pd.notna(max_date):
+    recent_sources = df[df['date'] == max_date]['source'].dropna().unique()
+    sources_str = ", ".join(sorted(str(s) for s in recent_sources))
+    st.info(f"📅 **Last Updated:** {max_date.strftime('%b %d, %Y')} &nbsp;&nbsp;|&nbsp;&nbsp; 📰 **Recent Sources:** {sources_str}")
+
 # --- Tabs ---
 tab_all, tab_consumer = st.tabs(["📊 All Startups", "🎯 Consumer Spotlight"])
 
@@ -96,10 +106,9 @@ with tab_all:
 
     f_col5, _ = st.columns(2)
     with f_col5:
-        df['date'] = pd.to_datetime(df['date'], errors='coerce')
-        min_date = df['date'].min().date()
-        max_date = df['date'].max().date()
-        date_range = st.date_input("Date Range", value=(min_date, max_date), key="date_all")
+        min_date = df['date'].min().date() if not df['date'].dropna().empty else pd.Timestamp('2000-01-01').date()
+        max_date_val = df['date'].max().date() if not df['date'].dropna().empty else pd.Timestamp('today').date()
+        date_range = st.date_input("Date Range", value=(min_date, max_date_val), key="date_all")
 
     # --- Apply Filters ---
     filtered_df = df.copy()

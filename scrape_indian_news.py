@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import feedparser
 import re
+from triage import triage_record
 
 DB_NAME = "startups.db"
 TABLE_NAME = "startups"
@@ -80,10 +81,12 @@ def scrape_indian_news():
             
         company, amount, description = extract_info(title)
         
-        if is_valid_company(company):
+        approved, cleaned_company, reason = triage_record(company, description, source)
+        
+        if approved:
             record = {
                 'date': today,
-                'company': company,
+                'company': cleaned_company,
                 'sector': 'Unknown',
                 'description': description,
                 'location': 'India',
