@@ -158,6 +158,8 @@ with tab_all:
             "date": st.column_config.DateColumn("Date of Funding"),
             "country": st.column_config.TextColumn("Country"),
             "source": st.column_config.TextColumn("Source"),
+            "stage": st.column_config.TextColumn("Stage"),
+            "website": st.column_config.LinkColumn("Website", display_text="Visit →"),
         },
         hide_index=True
     )
